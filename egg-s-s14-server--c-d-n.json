@@ -1,0 +1,154 @@
+{
+    "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PTERODACTYL PANEL - PTERODACTYL.IO",
+    "meta": {
+        "version": "PTDL_v2",
+        "update_url": null
+    },
+    "exported_at": "2025-02-01T23:11:09-06:00",
+    "name": "SS14 Server (CDN) (Good)",
+    "author": "josdekurk@gmail.com",
+    "description": "Space Station 14 tells the story of an ordinary shift on a space station gone wrong. Immerse yourself into your role, tinker with detailed systems, and survive the chaos in this round-based multiplayer role playing game.",
+    "features": null,
+    "docker_images": {
+        "Dotnet 9": "ghcr.io\/parkervcp\/yolks:dotnet_9",
+        "Dotnet 8": "ghcr.io\/parkervcp\/yolks:dotnet_8",
+        "Dotnet 7": "ghcr.io\/parkervcp\/yolks:dotnet_7"
+    },
+    "file_denylist": [],
+    "startup": "export DOTNET_TieredPGO=1; export DOTNET_TC_QuickJitForLoops=1; export DOTNET_ReadyToRun=0; export ROBUST_NUMERICS_AVX=true; .\/serverfiles\/Robust.Server --config-file datadir\/server_config.toml --data-dir datadir\/",
+    "config": {
+        "files": "{\r\n    \"datadir\/server_config.toml\": {\r\n        \"parser\": \"file\",\r\n        \"find\": {\r\n            \"hostname\": \"hostname = \\\"{{server.build.env.SERVER_NAME}}\\\"\",\r\n            \"tickrate\": \"tickrate = {{server.build.env.SERVER_TICK}}\",\r\n            \"soft_max_players\": \"soft_max_players = {{server.build.env.SERVER_MAX_PLAYERS}}\",\r\n            \"advertise\": \"advertise = {{server.build.env.ADVERTISE}}\",\r\n            \"discord\": \"discord = \\\"{{server.build.env.DISCORD}}\\\"\",\r\n            \"wiki\": \"wiki = \\\"{{server.build.env.WIKI}}\\\"\",\r\n            \"login_host_user\": \"login_host_user = \\\"{{server.build.env.ADMIN}}\\\"\",\r\n            \"desc\": \"desc = \\\"{{server.build.env.DESC}}\\\"\",\r\n            \"hub_urls\": \"hub_urls = \\\"{{server.build.env.HUB}}\\\"\"\r\n        }\r\n    }\r\n}",
+        "startup": "{\r\n    \"done\": \"Server Version\"\r\n}",
+        "logs": "{}",
+        "stop": "^SIGKILL"
+    },
+    "scripts": {
+        "installation": {
+            "script": "#!\/bin\/bash\r\napt update\r\napt -y install curl unzip wget\r\n\r\nARCH=$([[ \"$(uname -m)\" == \"x86_64\" ]] && echo \"linux-x64\" || echo \"linux-x64\")\r\n\r\nmkdir -p \/mnt\/server\r\ncd \/mnt\/server\r\n\r\nrm -r serverfiles\r\nmkdir datadir\r\nmkdir serverfiles\r\nAUTH=\"${FORK_ID}:${CREDENTIALS}\"\r\nif [ $(echo -n \"$BUILD_ID\" | wc -c) -lt 30 ]; then # if build_id is empty, get the latest build, this just hinges on the first sha1 being the latest one... good bet.\r\n  BUILD_ID=$(curl -s https:\/\/${AUTH}@cdn.goobstation.com\/fork\/${FORK_ID} | grep -Eo \"\\b[a-f0-9]{40}\\b\" | head -n 1)\r\nfi\r\nwget --user=$FORK_ID --password=$CREDENTIALS http:\/\/cdn.goobstation.com\/fork\/${FORK_ID}\/version\/${BUILD_ID}\/file\/SS14.Server_linux-x64.zip\r\nmkdir serverfiles\r\ncd serverfiles\r\nunzip ..\/SS14.Server_linux-x64.zip\r\nchmod 744 Robust.Server\r\ncd ..\r\nrm SS14.Server_linux-x64.zip\r\n\r\n\r\n\r\n## install end\r\necho \"-----------------------------------------\"\r\necho \"Installation completed...\"\r\necho \"-----------------------------------------\"",
+            "container": "bitnami\/dotnet-sdk:8-debian-11",
+            "entrypoint": "bash"
+        }
+    },
+    "variables": [
+        {
+            "name": "Server name",
+            "description": "The server hostname",
+            "env_variable": "SERVER_NAME",
+            "default_value": "MyServer",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|max:48",
+            "field_type": "text"
+        },
+        {
+            "name": "Server tickrate",
+            "description": "The tickrate of the server. Default is 30",
+            "env_variable": "SERVER_TICK",
+            "default_value": "30",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|numeric|between:20,60",
+            "field_type": "text"
+        },
+        {
+            "name": "Max players",
+            "description": "",
+            "env_variable": "SERVER_MAX_PLAYERS",
+            "default_value": "64",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|numeric|between:1,2000",
+            "field_type": "text"
+        },
+        {
+            "name": "Public server",
+            "description": "List server on public server list",
+            "env_variable": "ADVERTISE",
+            "default_value": "0",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|boolean|",
+            "field_type": "text"
+        },
+        {
+            "name": "discord infolink",
+            "description": "adds discord to the server infolink",
+            "env_variable": "DISCORD",
+            "default_value": "https:\/\/discord.gg\/wNYWCjZzk2",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "string|max:64|nullable",
+            "field_type": "text"
+        },
+        {
+            "name": "wiki infolink",
+            "description": "adds wiki infolink",
+            "env_variable": "WIKI",
+            "default_value": "https:\/\/www.wikipedia.org\/",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "string|max:64|nullable",
+            "field_type": "text"
+        },
+        {
+            "name": "default admin user",
+            "description": "username put in here gets admin on the server",
+            "env_variable": "ADMIN",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "string|max:64",
+            "field_type": "text"
+        },
+        {
+            "name": "server description",
+            "description": "adds description to the server browser",
+            "env_variable": "DESC",
+            "default_value": "networkgamez server",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "string",
+            "field_type": "text"
+        },
+        {
+            "name": "hub urls",
+            "description": "Comma seperated addresses for the hubs you want to list on.",
+            "env_variable": "HUB",
+            "default_value": "https:\/\/central.spacestation14.io\/hub\/,https:\/\/web.networkgamez.com",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "string|max:256|nullable",
+            "field_type": "text"
+        },
+        {
+            "name": "Fork id",
+            "description": "This is the fork you want to run",
+            "env_variable": "FORK_ID",
+            "default_value": "goobstation",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|max:64",
+            "field_type": "text"
+        },
+        {
+            "name": "Build id",
+            "description": "use this if you want to pull a spessific game version from the CDN, if its empty it will just pick the latest",
+            "env_variable": "BUILD_ID",
+            "default_value": "empty",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "string|max:64|nullable",
+            "field_type": "text"
+        },
+        {
+            "name": "fork authentication",
+            "description": "password for forks, not required.\r\nusername will always be forkuser",
+            "env_variable": "CREDENTIALS",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "string|max:64|nullable",
+            "field_type": "text"
+        }
+    ]
+}
