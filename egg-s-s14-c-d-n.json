@@ -16,7 +16,7 @@
         "Dotnet 6": "ghcr.io\/parkervcp\/yolks:dotnet_6"
     },
     "file_denylist": [],
-    "startup": ".\/bin\/Robust.Admin",
+    "startup": ".\/bin\/Robust.Cdn",
     "config": {
         "files": "{}",
         "startup": "{\r\n    \"done\": \"info\"\r\n}",
