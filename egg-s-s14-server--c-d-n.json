@@ -124,7 +124,7 @@
             "name": "Fork id",
             "description": "This is the fork you want to run",
             "env_variable": "FORK_ID",
-            "default_value": "goobstation",
+            "default_value": "GoobLRP",
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|string|max:64",
